@@ -13,7 +13,10 @@
 
 package org.openhab.automation.module.script.extension.sitemap;
 
+import org.eclipse.smarthome.model.sitemap.SitemapProvider;
 import org.eclipse.smarthome.model.sitemap.sitemap.*;
+import org.openhab.automation.module.script.extension.provider.LifecycleAwareDelegate;
+import org.openhab.automation.module.script.graaljs.internal.commonjs.LifecycleAwareSet;
 
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -23,10 +26,20 @@ import java.util.List;
  *
  * @author Jonathan Gilbert - Initial contribution
  */
-public class WidgetFactory {
+public class WidgetFactory extends LifecycleAwareSet {
 
     public static WidgetFactory create(){
         return new WidgetFactory();
+    }
+
+    public SitemapProvider newFixedSitemapProvider(List<Sitemap> sitemaps) {
+        return new FixedSitemapProvider(sitemaps);
+    }
+
+    public SitemapProvider registeringSitemapProvider(List<Sitemap> sitemaps) {
+        SitemapProvider provider = newFixedSitemapProvider(sitemaps);
+        addLifecycleAware(new LifecycleAwareDelegate<>(provider, SitemapProvider.class));
+        return provider;
     }
 
     public Sitemap newSitemap(String name, String label, String icon, List<Widget> children) {

@@ -13,6 +13,7 @@
 
 package org.openhab.automation.module.script.extension;
 
+import org.openhab.automation.module.script.graaljs.internal.commonjs.LifecycleAware;
 import org.openhab.core.automation.module.script.ScriptExtensionProvider;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
@@ -29,19 +30,19 @@ import java.util.function.Function;
  *
  * @author Jonathan Gilbert
  */
-public abstract class AbstractScriptExtensionProvider implements ScriptExtensionProvider {
+public abstract class AbstractScriptExtensionProvider implements ScriptExtensionProvider, LifecycleAware {
     private Map<String, Function<String, Object>> types;
     private Map<String, Map<String, Object>> idToTypes = new ConcurrentHashMap<>();
 
-    abstract String getPresetName();
-    abstract void initializeTypes(final BundleContext context);
+    protected abstract String getPresetName();
+    protected abstract void initializeTypes(final BundleContext context);
 
     protected void addType(String name, Function<String, Object> value) {
         types.put(name, value);
     }
 
     @Activate
-    void activate(final BundleContext context) {
+    public void activate(final BundleContext context) {
         types = new HashMap<>();
         initializeTypes(context);
     }
@@ -82,15 +83,20 @@ public abstract class AbstractScriptExtensionProvider implements ScriptExtension
     }
 
     @Override
-    public void unload(String scriptIdentifier) {
-        Map<String, Object> forScript = idToTypes.remove(scriptIdentifier);
+    public void onLifecycleEvent(Event e, String scriptIdentifier) {
+        Map<String, Object> forScript = (e == Event.DISPOSED ? idToTypes.remove(scriptIdentifier) : idToTypes.get(scriptIdentifier));
 
         if(forScript != null) {
             for(Object o : forScript.values()) {
-                if(o instanceof Disposable) {
-                    ((Disposable)o).dispose();
+                if(o instanceof LifecycleAware) {
+                    ((LifecycleAware)o).onLifecycleEvent(e, scriptIdentifier);
                 }
             }
         }
+    }
+
+    @Override
+    public void unload(String scriptIdentifier) {
+        onLifecycleEvent(Event.DISPOSED, scriptIdentifier);
     }
 }

@@ -25,12 +25,12 @@ import org.osgi.service.component.annotations.Component;
 public class OSGiScriptExtensionProvider extends AbstractScriptExtensionProvider {
 
     @Override
-    String getPresetName() {
+    protected String getPresetName() {
         return "osgi";
     }
 
     @Override
-    void initializeTypes(final BundleContext context) {
+    protected void initializeTypes(final BundleContext context) {
         ClassExtender classExtender = new ClassExtender();
 
         addType("bundleContext", k -> context);

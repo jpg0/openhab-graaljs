@@ -17,6 +17,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 import javax.script.ScriptEngine;
 
+import org.openhab.automation.module.script.extension.Lifecycle;
 import org.openhab.core.automation.module.script.ScriptEngineFactory;
 import org.openhab.core.automation.module.script.ScriptExtensionProvider;
 import org.osgi.service.component.annotations.Component;
@@ -49,26 +50,6 @@ public class ScriptExtensionManager {
 
     public void removeExtension(ScriptExtensionProvider provider) {
         scriptExtensionProviders.remove(provider);
-    }
-
-    public List<String> getTypes() {
-        List<String> types = new ArrayList<>();
-
-        for (ScriptExtensionProvider provider : scriptExtensionProviders) {
-            types.addAll(provider.getTypes());
-        }
-
-        return types;
-    }
-
-    public List<String> getPresets() {
-        List<String> presets = new ArrayList<>();
-
-        for (ScriptExtensionProvider provider : scriptExtensionProviders) {
-            presets.addAll(provider.getPresets());
-        }
-
-        return presets;
     }
 
     public Object get(String type, String scriptIdentifier) {
@@ -112,10 +93,11 @@ public class ScriptExtensionManager {
         return allValues;
     }
 
-    public void dispose(String scriptIdentifier) {
+    void notifyScriptLoaded(String scriptIdentifier) {
         for (ScriptExtensionProvider provider : scriptExtensionProviders) {
-            provider.unload(scriptIdentifier);
+            if (provider instanceof LifecycleAware) {
+                ((LifecycleAware) provider).onLifecycleEvent(LifecycleAware.Event.LOADED, scriptIdentifier);
+            }
         }
     }
-
 }

@@ -131,6 +131,7 @@ public class CommonJSScriptEngine {
     private void loadScript() throws ScriptException {
         configureEngine();
         engine.eval(scriptData);
+        scriptExtensionModuleProvider.notifyScriptLoaded(engineIdentifier);
     }
 
     private void unloadScript(){

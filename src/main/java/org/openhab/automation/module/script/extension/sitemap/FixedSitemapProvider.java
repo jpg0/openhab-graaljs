@@ -10,10 +10,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class BasicSitemapProvider implements SitemapProvider {
+public class FixedSitemapProvider implements SitemapProvider {
     private Map<String, Sitemap> sitemaps;
 
-    public BasicSitemapProvider(List<Sitemap> sitemaps) {
+    public FixedSitemapProvider(List<Sitemap> sitemaps) {
         this.sitemaps = new HashMap<>(sitemaps.size());
         for(Sitemap sitemap : sitemaps) {
             this.sitemaps.put(sitemap.getName(), sitemap);

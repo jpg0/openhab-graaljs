@@ -92,6 +92,10 @@ public class ScriptExtensionModuleProvider {
         return rv;
     }
 
+    void notifyScriptLoaded(String scriptIdentifier) {
+        scriptExtensionManager.notifyScriptLoaded(scriptIdentifier);
+    }
+
     private static class ValueCapturingScriptEngineFactory implements ScriptEngineFactory {
 
         @NonNullByDefault({}) //set later via the scopeValues call

@@ -35,6 +35,7 @@
         </bnd.importpackage>
         <graal.version>19.3.0</graal.version>
         <asm.version>6.2.1</asm.version>
+        <oh.version>${project.version}</oh.version>
     </properties>
 
     <build>
@@ -127,13 +128,13 @@
         <dependency>
             <groupId>org.openhab.core.bundles</groupId>
             <artifactId>org.openhab.core.automation</artifactId>
-            <version>${project.version}</version>
+            <version>${oh.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.openhab.core.bundles</groupId>
             <artifactId>org.openhab.core.automation.module.script</artifactId>
-            <version>${project.version}</version>
+            <version>${oh.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -141,7 +142,7 @@
         <dependency>
             <groupId>org.openhab.core.bundles</groupId>
             <artifactId>org.openhab.core.model.sitemap</artifactId>
-            <version>${project.version}</version>
+            <version>${oh.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

@@ -17,8 +17,6 @@ import org.openhab.core.automation.module.script.ScriptExtensionProvider;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
 
 import static org.osgi.service.component.annotations.ReferenceCardinality.MANDATORY;
 
@@ -38,12 +36,12 @@ public class ProvidersScriptExtensionProvider extends AbstractScriptExtensionPro
     }
 
     @Override
-    String getPresetName() {
+    protected String getPresetName() {
         return "provider";
     }
 
     @Override
-    void initializeTypes(final BundleContext context) {
+    protected void initializeTypes(final BundleContext context) {
         addType("itemBinding", k -> bindingItemProviderDelegateFactory);
     }
 }
