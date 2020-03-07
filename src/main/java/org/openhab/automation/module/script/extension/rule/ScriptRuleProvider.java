@@ -4,7 +4,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.automation.module.script.extension.provider.SuspendableFixedProvider;
 import org.openhab.core.automation.Rule;
 import org.openhab.core.automation.RuleProvider;
-import org.osgi.service.component.annotations.Component;
 
 import java.util.*;
 
