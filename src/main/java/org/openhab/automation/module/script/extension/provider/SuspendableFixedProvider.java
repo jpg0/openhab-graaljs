@@ -1,10 +1,12 @@
 package org.openhab.automation.module.script.extension.provider;
 
+import org.eclipse.jdt.annotation.NonNull;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class SuspendableFixedProvider<E> extends FixedProvider<E> {
+public class SuspendableFixedProvider<@NonNull E> extends FixedProvider<E> {
     private AtomicBoolean suspended = new AtomicBoolean();
 
     public SuspendableFixedProvider(Collection<E> all) {

@@ -1,7 +1,7 @@
 package org.openhab.automation.module.script.extension.rule;
 
-import org.eclipse.smarthome.config.core.Configuration;
-import org.eclipse.smarthome.model.sitemap.SitemapProvider;
+import org.openhab.core.config.core.Configuration;
+import org.openhab.core.model.sitemap.SitemapProvider;
 import org.openhab.automation.module.script.extension.module.GraalJSPrivateModuleHandlerFactory;
 import org.openhab.automation.module.script.extension.provider.LifecycleAwareDelegate;
 import org.openhab.automation.module.script.graaljs.internal.commonjs.LifecycleAware;

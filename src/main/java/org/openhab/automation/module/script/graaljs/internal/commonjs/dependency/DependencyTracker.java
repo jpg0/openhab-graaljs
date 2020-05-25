@@ -15,6 +15,7 @@ package org.openhab.automation.module.script.graaljs.internal.commonjs.dependenc
 
 import org.openhab.core.automation.module.script.ScriptEngineContainer;
 import org.openhab.core.automation.module.script.ScriptEngineManager;
+import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
@@ -36,7 +37,7 @@ public class DependencyTracker {
 
     private Logger logger = LoggerFactory.getLogger(DependencyTracker.class);
 
-    private ScriptEngineManager manager;
+    private ScriptEngineManager manager = null;
     private final BidiSetBag<String, String> scriptToLibs = new BidiSetBag<>();
     private ScriptLibraryListener scriptLibraryListener = new ScriptLibraryListener() {
         @Override
@@ -51,13 +52,17 @@ public class DependencyTracker {
             }
         }
     };
+    private BundleContext bundleContext;
 
-    public void activate() {
-        scriptLibraryListener.activate();
+    public void activate(BundleContext bundleContext) {
+        this.bundleContext = bundleContext;
     }
 
-    public void deactivate() {
-        scriptLibraryListener.deactivate();
+    private ScriptEngineManager getManager() {
+        if(manager == null) {
+            manager = bundleContext.getService(bundleContext.getServiceReference(ScriptEngineManager.class));
+        }
+        return manager;
     }
 
     @Reference
@@ -75,7 +80,7 @@ public class DependencyTracker {
             ScriptEngineContainer container = manager.createScriptEngine("js", scriptPath);
 
             if (container != null) {
-                manager.loadScript(container.getIdentifier(), reader);
+                getManager().loadScript(container.getIdentifier(), reader);
                 logger.debug("Script loaded: {}", scriptPath);
             } else {
                 logger.error("Script loading error, ignoring file: {}", scriptPath);

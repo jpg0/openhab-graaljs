@@ -14,7 +14,7 @@ package org.openhab.automation.module.script.graaljs.internal.commonjs;
 
 import com.oracle.truffle.js.scriptengine.GraalJSScriptEngine;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.smarthome.config.core.ConfigConstants;
+import org.openhab.core.config.core.ConfigConstants;
 import org.openhab.automation.module.script.graaljs.commonjs.internal.FilesystemFolder;
 import org.openhab.automation.module.script.graaljs.commonjs.internal.Folder;
 import org.openhab.automation.module.script.graaljs.commonjs.internal.JSModule;

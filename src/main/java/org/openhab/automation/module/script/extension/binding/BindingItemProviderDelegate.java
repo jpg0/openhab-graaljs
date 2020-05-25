@@ -14,16 +14,16 @@
 package org.openhab.automation.module.script.extension.binding;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.smarthome.config.core.Configuration;
-import org.eclipse.smarthome.core.common.registry.AbstractProvider;
-import org.eclipse.smarthome.core.common.registry.Provider;
-import org.eclipse.smarthome.core.common.registry.ProviderChangeListener;
-import org.eclipse.smarthome.core.items.Metadata;
-import org.eclipse.smarthome.core.items.MetadataKey;
-import org.eclipse.smarthome.model.item.BindingConfigReader;
+import org.openhab.core.config.core.Configuration;
+import org.openhab.core.common.registry.AbstractProvider;
+import org.openhab.core.common.registry.Provider;
+import org.openhab.core.common.registry.ProviderChangeListener;
+import org.openhab.core.items.Metadata;
+import org.openhab.core.items.MetadataKey;
+import org.openhab.core.model.item.BindingConfigReader;
 
-import org.eclipse.smarthome.core.items.Item;
-import org.eclipse.smarthome.core.items.ItemProvider;
+import org.openhab.core.items.Item;
+import org.openhab.core.items.ItemProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

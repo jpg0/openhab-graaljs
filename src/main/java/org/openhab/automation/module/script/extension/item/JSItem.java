@@ -1,6 +1,6 @@
 package org.openhab.automation.module.script.extension.item;
 
-import org.eclipse.smarthome.core.items.Item;
+import org.openhab.core.items.Item;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Value;
 import org.openhab.core.automation.Action;

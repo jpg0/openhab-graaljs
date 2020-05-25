@@ -1,6 +1,6 @@
 package org.openhab.automation.module.script.extension.item;
 
-import org.eclipse.smarthome.core.items.Item;
+import org.openhab.core.items.Item;
 import org.openhab.automation.module.script.extension.provider.LifecycleAwareDelegate;
 import org.openhab.automation.module.script.extension.rule.ScriptRuleProvider;
 import org.openhab.automation.module.script.graaljs.internal.commonjs.LifecycleAwareSet;

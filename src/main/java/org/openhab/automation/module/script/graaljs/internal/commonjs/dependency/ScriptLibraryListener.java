@@ -13,7 +13,7 @@
 
 package org.openhab.automation.module.script.graaljs.internal.commonjs.dependency;
 
-import org.eclipse.smarthome.core.service.AbstractWatchService;
+import org.openhab.core.service.AbstractWatchService;
 
 import java.io.File;
 import java.nio.file.Path;
