@@ -92,9 +92,7 @@ public final class GraalJSScriptEngineFactory implements ScriptEngineFactory {
                 Context.newBuilder("js")
                         .allowExperimentalOptions(true)
                         .allowAllAccess(true)
-                        .option("js.syntax-extensions", "true")
-                        .option("js.nashorn-compat", "true")
-                        .option("js.ecmascript-version", "2020"));
+                        .option("js.nashorn-compat", "true"));
 
         return configureEngine(engine);
     }

@@ -57,8 +57,6 @@ public class GraalLoader {
     public void loadGraal(){
         bundleContext.registerService(WeavingHook.class, this::weave, null);
 
-        //if Java 8, we bundle Graal, and need to assist it into OSGi...
-        if(System.getProperty("java.specification.version").compareTo("1.9") < 0) {
         /*
         Graal will attempt to neuter Nashorn by making it support no (well, null) languages. This will cause problems
         for any code that attempts to use (or is using) Nashorn in another classloader (e.g. another bundle), as Graal
@@ -99,7 +97,6 @@ public class GraalLoader {
             } finally {
                 Thread.currentThread().setContextClassLoader(tccl);
             }
-        }
     }
 
     public void weave(WovenClass wovenClass) {
