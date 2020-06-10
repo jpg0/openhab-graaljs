@@ -10,9 +10,10 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.openhab.automation.module.script.graaljs.internal.commonjs;
+package org.openhab.automation.module.script.graaljs.internal.commonjs.custom;
 
 import com.oracle.truffle.js.scriptengine.GraalJSScriptEngine;
+import org.openhab.automation.module.script.graaljs.internal.commonjs.ScriptExtensionModuleProvider;
 import org.openhab.automation.module.script.graaljs.internal.commonjs.dependency.DependencyTracker;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -22,8 +23,8 @@ import javax.script.ScriptEngine;
 /**
  * @author Jonathan Gilbert
  */
-@Component(service = CommonJSScriptEngineManager.class)
-public class CommonJSScriptEngineManager {
+@Component(service = CustomCommonJSScriptEngineManager.class)
+public class CustomCommonJSScriptEngineManager {
     private DependencyTracker dependencyTracker;
 
     @Reference
@@ -32,7 +33,8 @@ public class CommonJSScriptEngineManager {
     }
 
     public ScriptEngine create(GraalJSScriptEngine engine, ScriptExtensionModuleProvider scriptExtensionModuleProvider) {
-        CommonJSScriptEngine commonJSScriptEngine = CommonJSScriptEngine.create(engine, scriptExtensionModuleProvider, dependencyTracker);
+        CustomCommonJSScriptEngine commonJSScriptEngine = CustomCommonJSScriptEngine
+                .create(engine, scriptExtensionModuleProvider, dependencyTracker);
         return commonJSScriptEngine.createProxy();
     }
 }

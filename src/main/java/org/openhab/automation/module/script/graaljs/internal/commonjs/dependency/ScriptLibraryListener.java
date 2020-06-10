@@ -20,7 +20,7 @@ import java.nio.file.Path;
 import java.nio.file.WatchEvent;
 
 import static java.nio.file.StandardWatchEventKinds.*;
-import static org.openhab.automation.module.script.graaljs.internal.commonjs.CommonJSScriptEngine.LIB_PATH;
+import static org.openhab.automation.module.script.graaljs.internal.commonjs.custom.CustomCommonJSScriptEngine.LIB_PATH;
 
 /**
  * Listens for changes to script libraries

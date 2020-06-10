@@ -116,6 +116,7 @@
                             <overWriteReleases>true</overWriteReleases>
                             <overWriteSnapshots>true</overWriteSnapshots>
                             <excludeTransitive>true</excludeTransitive>
+                            <excludes>META-INF/services/com.oracle.truffle.api.TruffleLanguage$Provider</excludes> <!-- we'll provide this -->
                             <type>jar</type>
                         </configuration>
                     </execution>

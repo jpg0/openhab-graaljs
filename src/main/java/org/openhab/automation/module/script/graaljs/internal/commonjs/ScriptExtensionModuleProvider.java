@@ -44,14 +44,15 @@ public class ScriptExtensionModuleProvider {
     private static final String RUNTIME_MODULE_PREFIX = "@runtime";
     private static final String DEFAULT_MODULE_NAME = "Defaults";
 
-    private @NonNullByDefault({}) ScriptExtensionManager scriptExtensionManager;
+    private @NonNullByDefault({})
+    ScriptExtensionManager scriptExtensionManager;
 
     @Reference(cardinality = ReferenceCardinality.MANDATORY)
     public void setScriptExtensionManager(ScriptExtensionManager scriptExtensionManager) {
         this.scriptExtensionManager = scriptExtensionManager;
     }
 
-    ModuleLocator locatorFor(Context ctx, String engineIdentifier) {
+    public ModuleLocator locatorFor(Context ctx, String engineIdentifier) {
         return name -> {
             String[] segments = name.split("/");
             if(segments[0].equals(RUNTIME_MODULE_PREFIX)){
@@ -92,7 +93,7 @@ public class ScriptExtensionModuleProvider {
         return rv;
     }
 
-    void notifyScriptLoaded(String scriptIdentifier) {
+    public void notifyScriptLoaded(String scriptIdentifier) {
         scriptExtensionManager.notifyScriptLoaded(scriptIdentifier);
     }
 

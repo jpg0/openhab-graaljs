@@ -10,10 +10,11 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.openhab.automation.module.script.graaljs.internal.commonjs;
+package org.openhab.automation.module.script.graaljs.internal.commonjs.custom;
 
 import com.oracle.truffle.js.scriptengine.GraalJSScriptEngine;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.openhab.automation.module.script.graaljs.internal.commonjs.ScriptExtensionModuleProvider;
 import org.openhab.core.config.core.ConfigConstants;
 import org.openhab.automation.module.script.graaljs.commonjs.internal.FilesystemFolder;
 import org.openhab.automation.module.script.graaljs.commonjs.internal.Folder;
@@ -37,7 +38,7 @@ import java.util.stream.Collectors;
  * @author Jonathan Gilbert - Initial contribution
  */
 @NonNullByDefault
-public class CommonJSScriptEngine {
+public class CustomCommonJSScriptEngine {
 
     private static final String COMMONJS_LIB_PATHS = "graaljs.commonjs.lib.paths";
     public static final String LIB_PATH = String.join(File.separator, ConfigConstants.getConfigFolder(), "automation","lib","javascript");
@@ -56,7 +57,7 @@ public class CommonJSScriptEngine {
     @NonNullByDefault({}) private Reader scriptData;
     @NonNullByDefault({}) private String engineIdentifier;
 
-    private CommonJSScriptEngine(GraalJSScriptEngine engine,
+    private CustomCommonJSScriptEngine(GraalJSScriptEngine engine,
             ScriptExtensionModuleProvider scriptExtensionModuleProvider, DependencyTracker dependencyTracker) {
         this.engine = engine;
         this.scriptExtensionModuleProvider = scriptExtensionModuleProvider;
@@ -69,11 +70,11 @@ public class CommonJSScriptEngine {
      *
      * @return a ScriptEngine which logs script exceptions
      */
-    public static CommonJSScriptEngine create(GraalJSScriptEngine engine, ScriptExtensionModuleProvider scriptExtensionModuleProvider, DependencyTracker dependencyTracker) {
-        return new CommonJSScriptEngine(engine, scriptExtensionModuleProvider, dependencyTracker);
+    public static CustomCommonJSScriptEngine create(GraalJSScriptEngine engine, ScriptExtensionModuleProvider scriptExtensionModuleProvider, DependencyTracker dependencyTracker) {
+        return new CustomCommonJSScriptEngine(engine, scriptExtensionModuleProvider, dependencyTracker);
     }
 
-    ScriptEngine createProxy() {
+    public ScriptEngine createProxy() {
         return (ScriptEngine) Proxy.newProxyInstance(
                 ScriptEngine.class.getClassLoader(),
                 new Class<?>[]{ScriptEngine.class, Invocable.class},

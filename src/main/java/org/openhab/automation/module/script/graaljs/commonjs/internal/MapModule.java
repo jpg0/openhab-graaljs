@@ -32,21 +32,22 @@ public class MapModule implements ScriptModule {
     private Value module;
 
     public MapModule(Map<String, Object> values, Context ctx) {
-        try {
-            exports = ctx.eval(Source.newBuilder( //convert to Map to JS Object
-                    "js",
-                    "(function (mapOfValues) {\n" +
-                            "let rv = {};\n" +
-                            "for (var key in mapOfValues) {\n" +
-                            "    rv[key] = mapOfValues.get(key);\n" +
-                            "}\n" +
-                            "return rv;\n" +
-                            "})",
-                    "<generated>"
-            ).build()).execute(values);
-        } catch (IOException e) {
-            throw new IllegalStateException("Failed to generate exports");
-        }
+//        try {
+//            exports = ctx.eval(Source.newBuilder( //convert to Map to JS Object
+//                    "js",
+//                    "(function (mapOfValues) {\n" +
+//                            "let rv = {};\n" +
+//                            "for (var key in mapOfValues) {\n" +
+//                            "    rv[key] = mapOfValues.get(key);\n" +
+//                            "}\n" +
+//                            "return rv;\n" +
+//                            "})",
+//                    "<generated>"
+//            ).build()).execute(values);
+            exports = ctx.asValue(values);
+//        } catch (IOException e) {
+//            throw new IllegalStateException("Failed to generate exports");
+//        }
 
         module = ctx.eval("js", "({})");
         assert module != null;

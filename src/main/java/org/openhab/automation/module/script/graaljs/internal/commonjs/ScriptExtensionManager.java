@@ -93,7 +93,7 @@ public class ScriptExtensionManager {
         return allValues;
     }
 
-    void notifyScriptLoaded(String scriptIdentifier) {
+    public void notifyScriptLoaded(String scriptIdentifier) {
         for (ScriptExtensionProvider provider : scriptExtensionProviders) {
             if (provider instanceof LifecycleAware) {
                 ((LifecycleAware) provider).onLifecycleEvent(LifecycleAware.Event.LOADED, scriptIdentifier);

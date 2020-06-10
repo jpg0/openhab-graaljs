@@ -11,12 +11,14 @@
  * SPDX-License-Identifier: EPL-2.0
  */
 
-package org.openhab.automation.module.script.graaljs.internal;
+package org.openhab.automation.module.script.graaljs.internal.loader;
 
+import com.oracle.truffle.js.scriptengine.GraalJSScriptEngine;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.graalvm.polyglot.Engine;
+import org.graalvm.polyglot.Context;
 import org.objectweb.asm.*;
 import org.objectweb.asm.commons.InstructionAdapter;
+import org.openhab.automation.module.script.graaljs.internal.GraalJSScriptEngineFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.hooks.weaving.WeavingHook;
 import org.osgi.framework.hooks.weaving.WovenClass;
@@ -58,45 +60,42 @@ public class GraalLoader {
         bundleContext.registerService(WeavingHook.class, this::weave, null);
 
         /*
-        Graal will attempt to neuter Nashorn by making it support no (well, null) languages. This will cause problems
+        Graal will attempt to neuter Nashorn by making it support zero (well, null) languages. This will cause problems
         for any code that attempts to use (or is using) Nashorn in another classloader (e.g. another bundle), as Graal
         will not be available in those classloaders (and this would result in Nashorn not being either). Prevent this
         by preventing Nashorn being seen in Graal's startup
          */
-            ClassLoader original = Thread.currentThread().getContextClassLoader();
 
+        LoaderUtils.withContextClassloader(() -> {
             try {
-                Thread.currentThread().setContextClassLoader(new ClassLoader(original) {
-                    @Override
-                    @NonNullByDefault({})
-                    public Enumeration<URL> getResources(String name) throws IOException {
-                        if ("META-INF/services/javax.script.ScriptEngineFactory".equals(name)) {
-                            return Collections.emptyEnumeration();
-                        }
-                        return super.getResources(name);
-                    }
-                });
                 Class.forName("com.oracle.truffle.js.scriptengine.GraalJSEngineFactory");
             } catch (ClassNotFoundException e) {
-                //ignore, we'll fail later, outside a static initializer
-            } finally {
-                Thread.currentThread().setContextClassLoader(original);
+                throw new RuntimeException(e);
             }
 
-        /*
-        Graal will also try to load bits and pieces from the wrong classloader at <clinit> time from it's Engine. This
-        is only a problem for reloading the bundle as some classes are leaked. This attempts to contain them in the
-        current bundle's classloader
-         */
-            ClassLoader tccl = Thread.currentThread().getContextClassLoader();
-            Thread.currentThread().setContextClassLoader(GraalJSScriptEngineFactory.class.getClassLoader());
-            try {
-                Engine.newBuilder().build();
-            } catch (Exception e) {
-                //ignore, we'll fail later, outside a static initializer
-            } finally {
-                Thread.currentThread().setContextClassLoader(tccl);
+            /* Graal will also try to load bits and pieces from the wrong classloader at <clinit> time from it's Engine. This
+            is only a problem for reloading the bundle as some classes are leaked. This attempts to contain them in the
+            current bundle's classloader */
+//            Engine.newBuilder().build();
+
+            /* Actually create the first engine instance in the right classloader */
+            GraalJSScriptEngine.create(null,
+                    Context.newBuilder("js")
+                            .allowExperimentalOptions(true)
+                            .allowAllAccess(true)
+                            .option("js.nashorn-compat", "true")
+                            .option("js.commonjs-require", "true")).put("test", "object");
+
+        }, cl -> new ClassLoader(GraalJSScriptEngineFactory.class.getClassLoader()) {
+            @Override
+            @NonNullByDefault({})
+            public Enumeration<URL> getResources(String name) throws IOException {
+                if ("META-INF/services/javax.script.ScriptEngineFactory".equals(name)) {
+                    return Collections.emptyEnumeration();
+                }
+                return super.getResources(name);
             }
+        });
     }
 
     public void weave(WovenClass wovenClass) {

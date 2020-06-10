@@ -1,6 +1,5 @@
 package org.openhab.automation.module.script.extension.provider;
 
-import org.openhab.core.common.registry.Provider;
 import org.openhab.automation.module.script.graaljs.internal.commonjs.LifecycleAware;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;

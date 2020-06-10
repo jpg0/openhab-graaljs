@@ -12,13 +12,11 @@
  */
 package org.openhab.automation.module.script.graaljs.internal;
 
-import com.oracle.truffle.js.scriptengine.GraalJSScriptEngine;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.openhab.automation.module.script.graaljs.internal.commonjs.dependency.DependencyTracker;
+import org.openhab.automation.module.script.graaljs.internal.commonjs.graaljs.GraalJSCommonJSScriptEngineManager;
+import org.openhab.automation.module.script.graaljs.internal.loader.GraalLoader;
 import org.openhab.core.automation.module.script.ScriptEngineFactory;
-import org.graalvm.polyglot.Context;
-import org.openhab.automation.module.script.graaljs.internal.commonjs.CommonJSScriptEngineManager;
 import org.openhab.automation.module.script.graaljs.internal.commonjs.ScriptExtensionModuleProvider;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
@@ -41,7 +39,7 @@ public final class GraalJSScriptEngineFactory implements ScriptEngineFactory {
     @NonNullByDefault({})
     private ScriptExtensionModuleProvider scriptExtensionModuleProvider;
     @NonNullByDefault({})
-    private CommonJSScriptEngineManager commonJSScriptEngineManager;
+    private GraalJSCommonJSScriptEngineManager commonJSScriptEngineManager;
 
 
     /*
@@ -57,7 +55,7 @@ public final class GraalJSScriptEngineFactory implements ScriptEngineFactory {
     @Activate
     public void activate(BundleContext bundleContext) {
         // Load Graal at activation time
-        new GraalLoader(bundleContext).loadGraal();
+//        new GraalLoader(bundleContext).loadGraal();
     }
 
     @Reference(cardinality = ReferenceCardinality.MANDATORY)
@@ -66,7 +64,7 @@ public final class GraalJSScriptEngineFactory implements ScriptEngineFactory {
     }
 
     @Reference(cardinality = ReferenceCardinality.MANDATORY)
-    public void setCommonJSScriptEngineManager(CommonJSScriptEngineManager commonJSScriptEngineManager) {
+    public void setCommonJSScriptEngineManager(GraalJSCommonJSScriptEngineManager commonJSScriptEngineManager) {
         this.commonJSScriptEngineManager = commonJSScriptEngineManager;
     }
 
@@ -87,19 +85,12 @@ public final class GraalJSScriptEngineFactory implements ScriptEngineFactory {
 
     @Override
     public @Nullable ScriptEngine createScriptEngine(String scriptType) {
-        //create context with full access + nashorn compatibility
-        GraalJSScriptEngine engine = GraalJSScriptEngine.create(null,
-                Context.newBuilder("js")
-                        .allowExperimentalOptions(true)
-                        .allowAllAccess(true)
-                        .option("js.nashorn-compat", "true"));
-
-        return configureEngine(engine);
+        ScriptEngine engine = commonJSScriptEngineManager.create(scriptExtensionModuleProvider);
+        configureEngine(engine);
+        return engine;
     }
 
-    private ScriptEngine configureEngine(GraalJSScriptEngine graalJSEngine) {
-
-        ScriptEngine engine = commonJSScriptEngineManager.create(graalJSEngine, scriptExtensionModuleProvider);
+    private ScriptEngine configureEngine(ScriptEngine engine) {
 
         // log stack traces in user code if requested
         if (!Boolean.getBoolean(DISABLE_GRAALJS_SCRIPT_DEBUG)) {
