@@ -14,11 +14,12 @@ package org.openhab.automation.module.script.graaljs.internal.commonjs;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.graalvm.polyglot.Source;
+import org.graalvm.polyglot.Value;
+import org.openhab.automation.module.script.graaljs.internal.commonjs.graaljs.ModuleLocator;
 import org.openhab.core.automation.module.script.ScriptEngineFactory;
 import org.openhab.core.automation.module.script.rulesupport.shared.ScriptedAutomationManager;
 import org.graalvm.polyglot.Context;
-import org.openhab.automation.module.script.graaljs.commonjs.internal.MapModule;
-import org.openhab.automation.module.script.graaljs.commonjs.internal.ModuleLocator;
 import org.openhab.automation.module.script.graaljs.internal.threading.ThreadsafeWrappingScriptedAutomationManagerDelegate;
 
 import org.osgi.service.component.annotations.Component;
@@ -26,6 +27,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 
 import javax.script.ScriptEngine;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,7 +69,7 @@ public class ScriptExtensionModuleProvider {
         };
     }
 
-    private Optional<MapModule> runtimeModule(String name, String scriptIdentifier, Context ctx) {
+    private Optional<Value> runtimeModule(String name, String scriptIdentifier, Context ctx) {
         ValueCapturingScriptEngineFactory scopeHolder = new ValueCapturingScriptEngineFactory();
 
         if(DEFAULT_MODULE_NAME.equals(name)) {
@@ -78,7 +80,25 @@ public class ScriptExtensionModuleProvider {
 
         return Optional.ofNullable(scopeHolder.scopeValues)
                 .map(this::processValues)
-                .map(v -> new MapModule(v, ctx));
+                .map(v -> toValue(ctx, v));
+    }
+
+    private Value toValue(Context ctx, Map<String, Object> map) {
+        try {
+            return ctx.eval(Source.newBuilder( //convert to Map to JS Object
+                    "js",
+                    "(function (mapOfValues) {\n" +
+                            "let rv = {};\n" +
+                            "for (var key in mapOfValues) {\n" +
+                            "    rv[key] = mapOfValues.get(key);\n" +
+                            "}\n" +
+                            "return rv;\n" +
+                            "})",
+                    "<generated>"
+            ).build()).execute(map);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Failed to generate exports", e);
+        }
     }
 
     private Map<String, Object> processValues(Map<String, Object> values) {

@@ -16,6 +16,7 @@ package org.openhab.automation.module.script.graaljs.internal.commonjs.dependenc
 import org.openhab.core.automation.module.script.ScriptEngineContainer;
 import org.openhab.core.automation.module.script.ScriptEngineManager;
 import org.osgi.framework.BundleContext;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
@@ -54,8 +55,10 @@ public class DependencyTracker {
     };
     private BundleContext bundleContext;
 
+    @Activate
     public void activate(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
+        scriptLibraryListener.activate();
     }
 
     private ScriptEngineManager getManager() {
@@ -72,12 +75,12 @@ public class DependencyTracker {
 
     public void reimportScript(String scriptPath) {
         logger.debug("Reimporting {}...", scriptPath);
-        manager.removeEngine(scriptPath);
+        getManager().removeEngine(scriptPath);
 
         try (InputStreamReader reader = new InputStreamReader(new BufferedInputStream(new URL(scriptPath).openStream()))) {
             logger.info("Loading script '{}'", scriptPath);
 
-            ScriptEngineContainer container = manager.createScriptEngine("js", scriptPath);
+            ScriptEngineContainer container = getManager().createScriptEngine("js", scriptPath);
 
             if (container != null) {
                 getManager().loadScript(container.getIdentifier(), reader);

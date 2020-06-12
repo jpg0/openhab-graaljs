@@ -12,14 +12,12 @@
  */
 package org.openhab.automation.module.script.graaljs.internal;
 
+import com.oracle.truffle.js.scriptengine.GraalJSEngineFactory;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.automation.module.script.graaljs.internal.commonjs.graaljs.GraalJSCommonJSScriptEngineManager;
-import org.openhab.automation.module.script.graaljs.internal.loader.GraalLoader;
 import org.openhab.core.automation.module.script.ScriptEngineFactory;
 import org.openhab.automation.module.script.graaljs.internal.commonjs.ScriptExtensionModuleProvider;
-import org.osgi.framework.BundleContext;
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
@@ -41,23 +39,6 @@ public final class GraalJSScriptEngineFactory implements ScriptEngineFactory {
     @NonNullByDefault({})
     private GraalJSCommonJSScriptEngineManager commonJSScriptEngineManager;
 
-
-    /*
-    we could get these from GraalJSEngineFactory, but this causes problems with OSGi. This class attempts to replace
-    (well, fill with nulls) Nashorn at class load time (which is generally ok), but if loaded a second time (e.g. the
-    bundle is reloaded) then it ironically chokes at <clinit> time due to the state that it's left Nashorn in.
-     */
-    private static List<String> mimeTypes = Arrays.asList("application/javascript", "application/ecmascript", "text/javascript", "text/ecmascript");
-    private static List<String> extensions = Collections.singletonList("js");
-
-    private static final String DISABLE_GRAALJS_SCRIPT_DEBUG = "graaljs.script.debug.disabled";
-
-    @Activate
-    public void activate(BundleContext bundleContext) {
-        // Load Graal at activation time
-//        new GraalLoader(bundleContext).loadGraal();
-    }
-
     @Reference(cardinality = ReferenceCardinality.MANDATORY)
     public void setScriptExtensionModuleProvider(ScriptExtensionModuleProvider scriptExtensionModuleProvider) {
         this.scriptExtensionModuleProvider = scriptExtensionModuleProvider;
@@ -71,9 +52,10 @@ public final class GraalJSScriptEngineFactory implements ScriptEngineFactory {
     @Override
     public List<String> getScriptTypes() {
         List<String> scriptTypes = new ArrayList<>();
+        GraalJSEngineFactory graalJSEngineFactory = new GraalJSEngineFactory();
 
-        scriptTypes.addAll(mimeTypes);
-        scriptTypes.addAll(extensions);
+        scriptTypes.addAll(graalJSEngineFactory.getMimeTypes());
+        scriptTypes.addAll(graalJSEngineFactory.getExtensions());
 
         return Collections.unmodifiableList(scriptTypes);
     }
@@ -86,17 +68,6 @@ public final class GraalJSScriptEngineFactory implements ScriptEngineFactory {
     @Override
     public @Nullable ScriptEngine createScriptEngine(String scriptType) {
         ScriptEngine engine = commonJSScriptEngineManager.create(scriptExtensionModuleProvider);
-        configureEngine(engine);
-        return engine;
-    }
-
-    private ScriptEngine configureEngine(ScriptEngine engine) {
-
-        // log stack traces in user code if requested
-        if (!Boolean.getBoolean(DISABLE_GRAALJS_SCRIPT_DEBUG)) {
-            engine = DebuggingGraalScriptEngine.create(engine);
-        }
-
-        return engine;
+        return DebuggingGraalScriptEngine.create(engine);
     }
 }

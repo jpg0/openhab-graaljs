@@ -3,14 +3,14 @@ package org.openhab.automation.module.script.graaljs.internal.commonjs.graaljs;
 import com.oracle.truffle.js.scriptengine.GraalJSScriptEngine;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.graalvm.polyglot.Context;
-import org.openhab.automation.module.script.graaljs.commonjs.internal.ScriptModule;
 import org.openhab.automation.module.script.graaljs.internal.commonjs.ScriptExtensionModuleProvider;
 import org.openhab.automation.module.script.graaljs.internal.commonjs.dependency.DependencyTracker;
 import org.openhab.automation.module.script.graaljs.internal.commonjs.graaljs.fs.DelegatingFileSystem;
 import org.openhab.automation.module.script.graaljs.internal.commonjs.graaljs.fs.PrefixedSeekableByteChannel;
-import org.openhab.automation.module.script.graaljs.internal.loader.LoaderUtils;
+import org.openhab.core.config.core.ConfigConstants;
 
 import javax.script.*;
+import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.lang.reflect.Proxy;
@@ -19,7 +19,6 @@ import java.nio.file.FileSystems;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.attribute.FileAttribute;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -30,6 +29,8 @@ public class GraalJSCommonJSScriptEngine {
 
     private DependencyTracker dependencyTracker;
 
+    private static final String REQUIRE_WRAPPER_NAME = "__wraprequire__";
+
     //these fields start as null because they are populated at scriptLoaded time
     @NonNullByDefault({}) private Reader scriptData;
     @NonNullByDefault({}) private String engineIdentifier;
@@ -39,7 +40,7 @@ public class GraalJSCommonJSScriptEngine {
                 Context.newBuilder("js")
                         .allowExperimentalOptions(true)
                         .allowAllAccess(true)
-                        .option("js.commonjs-require-cwd", System.getenv("OPENHAB_CONF")+"/automation/lib/javascript/personal/")
+                        .option("js.commonjs-require-cwd", String.join(File.separator, ConfigConstants.getConfigFolder(), "automation","lib","javascript", "personal"))
                         .option("js.nashorn-compat", "true") //to ease migration
                         .option("js.commonjs-require", "true") //enable CommonJS module support
                         .fileSystem(new DelegatingFileSystem(FileSystems.getDefault().provider()){
@@ -49,48 +50,24 @@ public class GraalJSCommonJSScriptEngine {
                                 onLibLoaded(path.toString());
 
                                 if(path.toString().endsWith(".js")) {
-                                    return new PrefixedSeekableByteChannel("require=_wraprequire_(require);".getBytes(), super.newByteChannel(path, options, attrs));
+                                    return new PrefixedSeekableByteChannel(("require=" + REQUIRE_WRAPPER_NAME + "(require);").getBytes(), super.newByteChannel(path, options, attrs));
                                 } else {
                                     return super.newByteChannel(path, options, attrs);
                                 }
                             }
                         }));
 
-        Function<Function<Object[], Object>, Function<Object[], Object>> wrapRequireFn1 = original -> moduleNameArgs -> scriptExtensionModuleProvider
-                .locatorFor(engine.getPolyglotContext(), engineIdentifier)
-                .locateModule((String)moduleNameArgs[0])
-                .map(o -> (Object)o)
-                .orElse(original.apply(moduleNameArgs));
 
-        Function<Function<Object[], Object>, Function<String, Object>> wrapRequireFn = new Function<Function<Object[], Object>, Function<String, Object>>() {
-
-
-            @Override
-            public Function<String, Object> apply(Function<Object[], Object> originalRequireFn) {
-
-                return new Function<String, Object>() {
-                    @Override
-                    public Object apply(String moduleName) {
-                        Optional<? extends ScriptModule> rv = scriptExtensionModuleProvider
-                                .locatorFor(engine.getPolyglotContext(), engineIdentifier)
-                                .locateModule(moduleName);
-
-                        if(rv.isEmpty()) {
-//                            return engine.getPolyglotContext().
-                            return originalRequireFn.apply(new Object[]{moduleName});
-                        } else {
-                            return rv.get().getExports();
-                        }
-                    }
-                };
-            }
-        };
+        Function<Function<Object[], Object>, Function<String, Object>> wrapRequireFn = originalRequireFn -> moduleName -> scriptExtensionModuleProvider
+                    .locatorFor(engine.getPolyglotContext(), engineIdentifier)
+                    .locateModule(moduleName)
+                    .map(m -> (Object) m)
+                    .orElseGet(() -> originalRequireFn.apply(new Object[]{moduleName}));
 
         Bindings wrapper = new SimpleBindings();
-        wrapper.put("_wraprequire_", wrapRequireFn);
+        wrapper.put(REQUIRE_WRAPPER_NAME, wrapRequireFn);
         this.engine.setBindings(wrapper, ScriptContext.GLOBAL_SCOPE);
 
-//        this.engine.put("_wrap_require_", wrapRequireFn);
         this.engine.put("require", wrapRequireFn.apply((Function<Object[], Object>) this.engine.get("require")));
 
 

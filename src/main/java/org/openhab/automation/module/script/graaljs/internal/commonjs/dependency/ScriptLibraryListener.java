@@ -13,6 +13,7 @@
 
 package org.openhab.automation.module.script.graaljs.internal.commonjs.dependency;
 
+import org.openhab.core.config.core.ConfigConstants;
 import org.openhab.core.service.AbstractWatchService;
 
 import java.io.File;
@@ -20,7 +21,6 @@ import java.nio.file.Path;
 import java.nio.file.WatchEvent;
 
 import static java.nio.file.StandardWatchEventKinds.*;
-import static org.openhab.automation.module.script.graaljs.internal.commonjs.custom.CustomCommonJSScriptEngine.LIB_PATH;
 
 /**
  * Listens for changes to script libraries
@@ -28,6 +28,9 @@ import static org.openhab.automation.module.script.graaljs.internal.commonjs.cus
  * @author Jonathan Gilbert
  */
 abstract class ScriptLibraryListener extends AbstractWatchService {
+
+    public static final String LIB_PATH = String.join(File.separator, ConfigConstants.getConfigFolder(), "automation","lib","javascript");
+
 
     ScriptLibraryListener() {
         super(LIB_PATH);

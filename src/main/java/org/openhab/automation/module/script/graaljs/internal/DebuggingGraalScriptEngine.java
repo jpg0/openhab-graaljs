@@ -111,8 +111,7 @@ class DebuggingGraalScriptEngine {
 
     /**
      * Nasty hack to opportunistically extract the path from the passed Reader. Not currently possible as insufficient
-     * information is passed. Not guaranteed to work, fragile and depends on caller implementation. Ideally requires
-     * update of
+     * information is passed. Not guaranteed to work, fragile and depends on caller implementation.
      */
     private Optional<String> findPathForReader(Reader reader) {
         try {
