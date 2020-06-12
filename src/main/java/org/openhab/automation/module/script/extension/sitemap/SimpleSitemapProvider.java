@@ -1,9 +1,9 @@
 package org.openhab.automation.module.script.extension.sitemap;
 
 import org.eclipse.jdt.annotation.Nullable;
-import org.openhab.core.model.core.ModelRepositoryChangeListener;
-import org.openhab.core.model.sitemap.SitemapProvider;
-import org.openhab.core.model.sitemap.sitemap.Sitemap;
+import org.eclipse.smarthome.model.core.ModelRepositoryChangeListener;
+import org.eclipse.smarthome.model.sitemap.SitemapProvider;
+import org.eclipse.smarthome.model.sitemap.sitemap.Sitemap;
 
 import java.util.List;
 import java.util.Set;

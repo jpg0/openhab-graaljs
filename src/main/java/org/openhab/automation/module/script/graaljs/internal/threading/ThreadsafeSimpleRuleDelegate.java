@@ -22,8 +22,8 @@ import org.openhab.core.automation.Condition;
 import org.openhab.core.automation.Trigger;
 import org.openhab.core.automation.module.script.rulesupport.shared.simple.SimpleRule;
 import org.openhab.core.automation.module.script.rulesupport.shared.simple.SimpleRuleActionHandler;
-import org.openhab.core.config.core.ConfigDescriptionParameter;
-import org.openhab.core.config.core.Configuration;
+import org.eclipse.smarthome.config.core.ConfigDescriptionParameter;
+import org.eclipse.smarthome.config.core.Configuration;
 
 import java.util.List;
 import java.util.Map;

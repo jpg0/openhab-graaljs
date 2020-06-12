@@ -1,7 +1,7 @@
 package org.openhab.automation.module.script.extension.provider;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.openhab.core.common.registry.AbstractProvider;
+import org.eclipse.smarthome.core.common.registry.AbstractProvider;
 
 import java.util.ArrayList;
 import java.util.Collection;

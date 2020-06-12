@@ -13,8 +13,8 @@
 
 package org.openhab.automation.module.script.extension.sitemap;
 
-import org.openhab.core.model.sitemap.SitemapProvider;
-import org.openhab.core.model.sitemap.sitemap.*;
+import org.eclipse.smarthome.model.sitemap.SitemapProvider;
+import org.eclipse.smarthome.model.sitemap.sitemap.*;
 import org.openhab.automation.module.script.extension.provider.LifecycleAwareDelegate;
 import org.openhab.automation.module.script.graaljs.internal.commonjs.LifecycleAwareSet;
 

@@ -7,7 +7,7 @@ import org.openhab.automation.module.script.graaljs.internal.commonjs.ScriptExte
 import org.openhab.automation.module.script.graaljs.internal.commonjs.dependency.DependencyTracker;
 import org.openhab.automation.module.script.graaljs.internal.commonjs.graaljs.fs.DelegatingFileSystem;
 import org.openhab.automation.module.script.graaljs.internal.commonjs.graaljs.fs.PrefixedSeekableByteChannel;
-import org.openhab.core.config.core.ConfigConstants;
+import org.eclipse.smarthome.config.core.ConfigConstants;
 
 import javax.script.*;
 import java.io.File;

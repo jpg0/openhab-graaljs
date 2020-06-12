@@ -14,9 +14,9 @@
 package org.openhab.automation.module.script.extension.binding;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.openhab.core.items.ItemProvider;
-import org.openhab.core.items.MetadataRegistry;
-import org.openhab.core.model.item.BindingConfigReader;
+import org.eclipse.smarthome.core.items.ItemProvider;
+import org.eclipse.smarthome.core.items.MetadataRegistry;
+import org.eclipse.smarthome.model.item.BindingConfigReader;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;

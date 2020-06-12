@@ -14,8 +14,8 @@
 package org.openhab.automation.module.script.extension.binding;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.openhab.core.items.MetadataRegistry;
-import org.openhab.core.model.item.BindingConfigReader;
+import org.eclipse.smarthome.core.items.MetadataRegistry;
+import org.eclipse.smarthome.model.item.BindingConfigReader;
 
 import java.util.Map;
 
