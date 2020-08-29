@@ -1,0 +1,13 @@
+  - BindingItemProviderDelegate + package / ProvidersScriptExtensionProvider - allows creation of item provider. This provider allows items to be bound based on their metadata.
+  - RuleFactory + ModuleHandlerStuff - allows wiring up of *unmanaged* rules. The current thing always registers them.
+  - FixedProvider / SuspendableFixedProvider - allows suspendable providers to allow correct insertion order
+  - LifecycleAwareDelegate / - General stuff that is aware of consumer lifecycles
+  - sitemap package - all sitemap API assistance stuff
+  - Lifecycle / OSGiScriptExtensionProvider - osgi + lifecycle for script libs
+
+  - ClassExtender - Graal specific
+
+  - additional context from script manager
+     - dependency tracking
+     - engine identifier
+     

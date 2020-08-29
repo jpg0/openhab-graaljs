@@ -101,10 +101,11 @@ class DebuggingGraalScriptEngine {
         try {
             return toExecute.invoke();
         } catch (InvocationTargetException ite) {
-            Throwable cause = ite.getTargetException().getCause();
-            if (cause instanceof PolyglotException) {
-                stackLogger.error("Failed to execute script:", cause);
-            }
+            Throwable target = ite.getTargetException();
+            Throwable toLog = target.getCause() == null ? target : target.getCause();
+//            if (cause instanceof PolyglotException) {
+                stackLogger.error("Failed to execute script:", toLog);
+//            }
             throw ite;
         }
     }
